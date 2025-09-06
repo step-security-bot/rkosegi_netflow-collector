@@ -17,6 +17,9 @@ on:
   schedule:
     - cron: 30 2 * * 2
   workflow_dispatch:
+permissions:
+  contents: read
+
 jobs:
   close-issues:
     runs-on: ubuntu-latest
@@ -24,7 +27,12 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v10
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/stale@3a9db7e6a41a89f618792c92c0e97cc736e1b13f # v10.0.0
         with:
           days-before-stale: 30
           days-before-close: 7
